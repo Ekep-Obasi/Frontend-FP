@@ -1,4 +1,5 @@
 import { MapPin, ExternalLink, CloudSun, Star } from "lucide-react";
+import Image from "next/image";
 import { ReactNode } from "react";
 
 type LocationCardProps = {
@@ -24,17 +25,24 @@ export default function LocationCard({
 }: LocationCardProps) {
   return (
     <div
-      className="rounded-xl border border-black/10 dark:border-white/10 hover:shadow-md transition bg-white dark:bg-zinc-900 cursor-pointer"
+      className="rounded-xl border border-border hover:shadow-md transition bg-background cursor-pointer"
       onClick={onClick}
     >
       {imageUrl && (
-        <div className="h-36 w-full overflow-hidden rounded-t-xl">
-          <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+        <div className="h-36 w-full overflow-hidden rounded-t-xl relative">
+          <Image
+            src={imageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            priority={false}
+          />
         </div>
       )}
       <div className="p-4 flex items-start gap-3">
         <div className="shrink-0 mt-0.5">
-          <MapPin className="w-5 h-5 text-blue-600" />
+          <MapPin className="w-5 h-5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold truncate">{title}</div>
@@ -48,17 +56,17 @@ export default function LocationCard({
             </div>
           )}
           {description && (
-            <p className="text-sm mt-2 line-clamp-3 text-zinc-700 dark:text-zinc-300">
+            <p className="text-sm mt-2 line-clamp-3 text-muted-foreground">
               {description}
             </p>
           )}
           {footer && (
-            <div className="mt-3 text-sm flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+            <div className="mt-3 text-sm flex items-center gap-2 text-muted-foreground">
               {footer}
             </div>
           )}
         </div>
-        <ExternalLink className="w-4 h-4 text-zinc-400" />
+        <ExternalLink className="w-4 h-4 text-muted-foreground" />
       </div>
     </div>
   );
@@ -72,7 +80,7 @@ export function WeatherBadge({
   summary?: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-200 px-2 py-0.5 text-xs font-medium">
+    <span className="inline-flex items-center gap-1 rounded-full bg-muted text-foreground px-2 py-0.5 text-xs font-medium">
       <CloudSun className="w-3 h-3" />
       {tempC !== undefined ? `${Math.round(tempC)}°C` : "—"}
       {summary ? `· ${summary}` : null}

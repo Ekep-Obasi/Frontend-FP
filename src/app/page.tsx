@@ -107,7 +107,7 @@ export default function Home() {
               <MapView center={mapCenter} markers={mapMarkers} />
             </div>
             <div className="w-full md:w-80 space-y-3">
-              <div className="rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-zinc-900">
+              <div className="rounded-xl border border-border p-4 bg-background">
                 <div className="font-semibold mb-2">Smart Itinerary</div>
                 <label className="text-sm block mb-1">Destination hint</label>
                 <Input
@@ -155,7 +155,7 @@ export default function Home() {
                 </Button>
               </div>
 
-              <div className="rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-zinc-900">
+              <div className="rounded-xl border border-border p-4 bg-background">
                 <div className="font-semibold mb-2">History</div>
                 <HistoryList />
               </div>
@@ -181,7 +181,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="rounded-xl border p-4 bg-white dark:bg-zinc-900">
+              <div className="rounded-xl border border-border p-4 bg-background">
                 <div className="font-semibold mb-2">Explore</div>
                 <div className="flex gap-2">
                   <Input
@@ -195,7 +195,7 @@ export default function Home() {
                 </div>
               </div>
               {activePlan ? (
-                <div className="rounded-xl border p-4 bg-white dark:bg-zinc-900">
+                <div className="rounded-xl border border-border p-4 bg-background">
                   <div className="font-semibold mb-2">Timeline</div>
                   <Timeline plan={activePlan} />
                 </div>

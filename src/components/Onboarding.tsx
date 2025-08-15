@@ -62,7 +62,7 @@ export default function Onboarding({ onComplete }: Props) {
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <div className="rounded-2xl border border-black/10 dark:border-white/10 p-6 bg-white dark:bg-zinc-900">
+      <div className="rounded-2xl border border-border p-6 bg-background">
         <div className="text-lg font-semibold mb-4">Welcome to The Company</div>
         {step === 1 && (
           <div className="space-y-3">
@@ -74,7 +74,7 @@ export default function Onboarding({ onComplete }: Props) {
             />
             <div className="flex justify-end">
               <button
-                className="mt-2 rounded-md bg-blue-600 text-white px-4 py-2 text-sm"
+                className="mt-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm"
                 onClick={() => setStep(2)}
               >
                 Next
@@ -104,7 +104,7 @@ export default function Onboarding({ onComplete }: Props) {
                 Back
               </button>
               <button
-                className="rounded-md bg-blue-600 text-white px-4 py-2 text-sm disabled:opacity-60"
+                className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm disabled:opacity-60"
                 onClick={createPlan}
                 disabled={loading}
               >

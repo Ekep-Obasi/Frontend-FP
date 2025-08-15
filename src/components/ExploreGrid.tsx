@@ -4,6 +4,7 @@ import useSWR from "swr";
 import LocationCard from "./LocationCard";
 import { useUIStore } from "~/store/uiStore";
 import { buildPhotoUrl } from "~/lib/googlePlaces";
+import { PlacesSearchResponse, PlaceSearchResult } from "~/types/places";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -18,7 +19,7 @@ export default function ExploreGrid({
   const qs = new URLSearchParams();
   if (query) qs.set("q", query);
   if (location) qs.set("location", `${location.lat},${location.lon}`);
-  const { data, isLoading } = useSWR(
+  const { data, isLoading } = useSWR<PlacesSearchResponse>(
     query ? `/api/places?${qs.toString()}` : null,
     fetcher,
   );
@@ -27,11 +28,11 @@ export default function ExploreGrid({
   if (isLoading)
     return <div className="text-sm text-zinc-500">Searching “{query}”…</div>;
 
-  const results = data?.results || [];
+  const results: PlaceSearchResult[] = data?.results || [];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {results.map((r: any) => (
+      {results.map((r) => (
         <LocationCard
           key={r.place_id}
           title={r.name}

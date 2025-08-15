@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR from "swr";
+import Image from "next/image";
 import { buildPhotoUrl } from "~/lib/googlePlaces";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -73,12 +74,19 @@ export default function PlaceDetails({
               ? buildPhotoUrl(p.photo_reference, 500)
               : undefined;
             return src ? (
-              <img
+              <div
                 key={idx}
-                src={src}
-                alt="Photo"
-                className="w-full h-24 object-cover rounded-md"
-              />
+                className="w-full h-24 relative rounded-md overflow-hidden"
+              >
+                <Image
+                  src={src}
+                  alt="Photo"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 33vw, 33vw"
+                  priority={false}
+                />
+              </div>
             ) : null;
           })}
         </div>
@@ -96,14 +104,12 @@ export default function PlaceDetails({
                 ) => (
                   <li
                     key={i}
-                    className="text-sm border rounded-md p-3 bg-white/50 dark:bg-zinc-900/50"
+                    className="text-sm border rounded-md p-3 bg-background/50"
                   >
                     <div className="font-medium">
                       {r.author_name} — {r.rating}★
                     </div>
-                    <div className="text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap">
-                      {r.text}
-                    </div>
+                    <div className="whitespace-pre-wrap">{r.text}</div>
                   </li>
                 ),
               )}

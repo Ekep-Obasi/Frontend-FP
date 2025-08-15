@@ -74,7 +74,7 @@ export default function HistoryPage() {
           {data.map((p) => (
             <div
               key={p.id}
-              className="rounded-xl border p-4 bg-white dark:bg-zinc-900"
+              className="rounded-xl border border-border p-4 bg-background"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
@@ -104,7 +104,7 @@ export default function HistoryPage() {
                         onChange={(e) => setNewName(e.target.value)}
                       />
                       <button
-                        className="rounded-md bg-blue-600 text-white px-3 py-1 text-sm"
+                        className="rounded-md bg-primary text-primary-foreground px-3 py-1 text-sm"
                         onClick={() => rename(p._id as string, p)}
                       >
                         Save

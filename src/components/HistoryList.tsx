@@ -31,7 +31,7 @@ export default function HistoryList() {
       {data.map((p) => (
         <button
           key={p._id}
-          className="w-full text-left px-3 py-2 rounded-md border hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          className="w-full text-left px-3 py-2 rounded-md border hover:bg-muted"
           onClick={async () => {
             // Ensure the plan appears locally too
             upsertPlan({

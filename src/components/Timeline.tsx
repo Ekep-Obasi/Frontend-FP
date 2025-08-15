@@ -6,10 +6,7 @@ export default function Timeline({ plan }: { plan: TripPlan }) {
   return (
     <div className="space-y-4">
       {plan.days.map((day, idx) => (
-        <div
-          key={idx}
-          className="rounded-xl border border-black/10 dark:border-white/10 p-4"
-        >
+        <div key={idx} className="rounded-xl border border-border p-4">
           <div className="font-semibold mb-2">
             {day.date ?? `Day ${idx + 1}`}
           </div>
@@ -32,7 +29,7 @@ export default function Timeline({ plan }: { plan: TripPlan }) {
                   });
                 }}
               >
-                <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-blue-600" />
+                <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-primary" />
                 <div className="text-sm">
                   <span className="font-medium">
                     {item.time ? `${item.time} · ` : null}

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getDb } from "~/lib/db";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
@@ -34,15 +34,24 @@ const TripPlan = z.object({
   ),
 });
 
-export async function GET(
-  _: NextRequest,
-  { params }: { params: { id: string } },
-) {
+function extractIdFromUrl(url: string): string | null {
+  try {
+    const { pathname } = new URL(url);
+    const segments = pathname.split("/").filter(Boolean);
+    return segments[segments.length - 1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function GET(req: Request) {
   try {
     const db = await getDb();
-    const doc = await db
-      .collection("plans")
-      .findOne({ _id: new ObjectId(params.id) });
+    const id = extractIdFromUrl(req.url);
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+    const doc = await db.collection("plans").findOne({ _id: new ObjectId(id) });
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(
       { _id: String(doc._id), ...doc.plan, createdAt: doc.createdAt },
@@ -53,10 +62,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(req: Request) {
   try {
     const body = await req.json();
     const parsed = TripPlan.safeParse(body);
@@ -67,12 +73,13 @@ export async function PUT(
       );
     }
     const db = await getDb();
+    const id = extractIdFromUrl(req.url);
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
     await db
       .collection("plans")
-      .updateOne(
-        { _id: new ObjectId(params.id) },
-        { $set: { plan: parsed.data } },
-      );
+      .updateOne({ _id: new ObjectId(id) }, { $set: { plan: parsed.data } });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "DB error" }, { status: 500 });
@@ -81,13 +88,14 @@ export async function PUT(
 
 export const dynamic = "force-dynamic";
 
-export async function DELETE(
-  _: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: Request) {
   try {
     const db = await getDb();
-    await db.collection("plans").deleteOne({ _id: new ObjectId(params.id) });
+    const id = extractIdFromUrl(req.url);
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+    await db.collection("plans").deleteOne({ _id: new ObjectId(id) });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "DB error" }, { status: 500 });

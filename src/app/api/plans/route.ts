@@ -7,7 +7,7 @@ const TripDayItem = z.object({
   title: z.string(),
   description: z.string().optional(),
   placeQuery: z.string().optional(),
-  // Allow any string for type to accommodate AI output like "travel", "nature", etc.
+  // Allow arbitrary string for type to accommodate AI output like "travel", "nature", etc.
   type: z.string().optional(),
   coordinates: z.object({ lat: z.number(), lon: z.number() }).optional(),
   placeId: z.string().optional(),
