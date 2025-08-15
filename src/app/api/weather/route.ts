@@ -11,10 +11,10 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const apiKey = process.env.OPENWEATHER_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Missing OPENWEATHER_API_KEY" },
+      { error: "Missing NEXT_PUBLIC_OPENWEATHER_API_KEY" },
       { status: 500 },
     );
   }

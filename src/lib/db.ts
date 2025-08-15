@@ -1,9 +1,9 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.NEXT_PUBLIC_MONGODB_URI;
 if (!uri) {
   console.warn(
-    "MONGODB_URI is not set. API endpoints depending on DB will fail.",
+    "NEXT_PUBLIC_MONGODB_URI is not set. API endpoints depending on DB will fail.",
   );
 }
 
@@ -25,5 +25,7 @@ if (uri) {
 export async function getDb() {
   if (!clientPromise) throw new Error("MONGODB_URI not configured");
   const cli = await clientPromise;
-  return cli.db(process.env.MONGODB_DB || "smart-travel-itineraries");
+  return cli.db(
+    process.env.NEXT_PUBLIC_MONGODB_DB || "smart-travel-itineraries",
+  );
 }
