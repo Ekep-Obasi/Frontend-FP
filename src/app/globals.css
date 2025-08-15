@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Subtle brand identity */
+.brand-surface {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.02), transparent 60%);
+}
+
+.card {
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}

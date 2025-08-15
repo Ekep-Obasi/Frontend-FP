@@ -1,103 +1,229 @@
-import Image from "next/image";
+"use client";
+
+import { Fragment, useEffect, useState } from "react";
+import MapView from "~/components/MapView";
+import Timeline from "~/components/Timeline";
+import LocationCard, { WeatherBadge } from "~/components/LocationCard";
+import { useTripStore, TripPlan } from "~/store/tripStore";
+import useSWR from "swr";
+import Onboarding from "~/components/Onboarding";
+import Loader from "~/components/Loader";
+import HistoryList from "~/components/HistoryList";
+import ExploreGrid from "~/components/ExploreGrid";
+import PlaceDetails from "~/components/PlaceDetails";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "~/components/ui/dialog";
+import { useUIStore } from "~/store/uiStore";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { plans, activePlanId, upsertPlan, setActivePlan } = useTripStore();
+  const activePlan = plans.find((p) => p.id === activePlanId);
+  const [interests, setInterests] = useState<string>("food, museums, nature");
+  const [destinationHint, setDestinationHint] = useState<string>("Tokyo");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("best cafes");
+  const placeModalOpen = useUIStore((s) => s.placeModalOpen);
+  const selectedPlaceId = useUIStore((s) => s.selectedPlaceId);
+  const selectedQuery = useUIStore((s) => s.selectedQuery);
+  const mapCenter = useUIStore((s) => s.mapCenter);
+  const mapMarkers = useUIStore((s) => s.mapMarkers);
+  const setMapTo = useUIStore((s) => s.setMapTo);
+  const closePlace = useUIStore((s) => s.closePlace);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const { data: weather } = useSWR(
+    activePlan?.days?.[0]?.items?.[0]?.coordinates
+      ? `/api/weather?lat=${activePlan.days[0].items[0].coordinates.lat}&lon=${activePlan.days[0].items[0].coordinates.lon}`
+      : null,
+    fetcher,
+  );
+
+  async function generateItinerary() {
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          interests: interests
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          destinationHint,
+          travelers: 2,
+          budgetLevel: "medium",
+        }),
+      });
+      const json = await res.json();
+      if (json.itinerary) {
+        const plan: TripPlan = {
+          id: crypto.randomUUID(),
+          name: `${destinationHint} Trip`,
+          travelers: 2,
+          budgetLevel: "medium",
+          interests: interests
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          constraints: [],
+          destinations: json.itinerary.destinations ?? [],
+          estimatedCostUSD: json.itinerary.estimatedCostUSD,
+          days: json.itinerary.days ?? [],
+        };
+        upsertPlan(plan);
+        try {
+          await fetch("/api/plans", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(plan),
+          });
+        } catch {}
+      }
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!activePlan) setShowOnboarding(true);
+  }, [activePlan]);
+
+  return (
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {showOnboarding && plans.length === 0 ? (
+        <Onboarding onComplete={() => setShowOnboarding(false)} />
+      ) : (
+        <Fragment>
+          <div className="flex flex-col md:flex-row gap-4 items-stretch">
+            <div className="flex-1">
+              <MapView center={mapCenter} markers={mapMarkers} />
+            </div>
+            <div className="w-full md:w-80 space-y-3">
+              <div className="rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-zinc-900">
+                <div className="font-semibold mb-2">Smart Itinerary</div>
+                <label className="text-sm block mb-1">Destination hint</label>
+                <Input
+                  value={destinationHint}
+                  onChange={(e) => {
+                    setDestinationHint(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && destinationHint.trim()) {
+                      // Try geocoding the hint using places text search to center map
+                      fetch(
+                        `/api/places?q=${encodeURIComponent(
+                          destinationHint,
+                        )}&provider=google`,
+                      )
+                        .then((r) => r.json())
+                        .then((d) => {
+                          const first = d?.results?.[0];
+                          const loc = first?.geometry?.location;
+                          if (loc) {
+                            setMapTo({ lat: loc.lat, lon: loc.lng }, [
+                              {
+                                id: first.place_id,
+                                lat: loc.lat,
+                                lon: loc.lng,
+                                title: first.name,
+                              },
+                            ]);
+                          }
+                        });
+                    }
+                  }}
+                />
+                <label className="text-sm block mt-3 mb-1">Interests</label>
+                <Input
+                  value={interests}
+                  onChange={(e) => setInterests(e.target.value)}
+                />
+                <Button
+                  className="mt-3 w-full"
+                  onClick={generateItinerary}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? <Loader label="Generating" /> : "Generate"}
+                </Button>
+              </div>
+
+              <div className="rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-zinc-900">
+                <div className="font-semibold mb-2">History</div>
+                <HistoryList />
+              </div>
+
+              {activePlan && (
+                <LocationCard
+                  title={activePlan.name}
+                  subtitle={activePlan.destinations?.join(", ")}
+                  description={`Estimated cost: $${
+                    activePlan.estimatedCostUSD ?? "—"
+                  }`}
+                  footer={
+                    <WeatherBadge
+                      tempC={weather?.list?.[0]?.main?.temp}
+                      summary={weather?.list?.[0]?.weather?.[0]?.main}
+                    />
+                  }
+                  onClick={() => setActivePlan(activePlan.id)}
+                />
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="rounded-xl border p-4 bg-white dark:bg-zinc-900">
+                <div className="font-semibold mb-2">Explore</div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Search places (e.g. museums, ramen, parks)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="mt-4">
+                  <ExploreGrid query={searchQuery} />
+                </div>
+              </div>
+              {activePlan ? (
+                <div className="rounded-xl border p-4 bg-white dark:bg-zinc-900">
+                  <div className="font-semibold mb-2">Timeline</div>
+                  <Timeline plan={activePlan} />
+                </div>
+              ) : (
+                <div className="text-center text-zinc-500 py-10">
+                  Generate an itinerary to see the timeline.
+                </div>
+              )}
+            </div>
+            <div className="lg:col-span-1" />
+          </div>
+
+          <Dialog
+            open={placeModalOpen}
+            onOpenChange={(open) => {
+              if (!open) closePlace();
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <DialogContent>
+              <DialogTitle>Place details</DialogTitle>
+              <DialogDescription>Photos, ratings and reviews</DialogDescription>
+              <div className="mt-2">
+                <PlaceDetails placeId={selectedPlaceId} query={selectedQuery} />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </Fragment>
+      )}
     </div>
   );
 }

@@ -6,12 +6,28 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check ."
   },
   "dependencies": {
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.6"
+    "next": "15.4.6",
+    "zustand": "^4.5.5",
+    "zod": "^3.23.8",
+    "swr": "^2.2.5",
+    "@google/generative-ai": "^0.21.0",
+    "maplibre-gl": "^5.0.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.473.0",
+    "date-fns": "^4.1.0",
+    "mongodb": "^6.9.0",
+    "@react-google-maps/api": "^2.20.6",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "class-variance-authority": "^0.7.0",
+    "tailwind-merge": "^2.5.2",
+    "sonner": "^1.5.0"
   },
   "devDependencies": {
     "typescript": "^5",
@@ -23,5 +39,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "@eslint/eslintrc": "^3"
-  }
+  },
+  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }

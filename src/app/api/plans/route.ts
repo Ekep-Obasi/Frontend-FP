@@ -9,9 +9,7 @@ const TripDayItem = z.object({
   placeQuery: z.string().optional(),
   // Allow any string for type to accommodate AI output like "travel", "nature", etc.
   type: z.string().optional(),
-  coordinates: z
-    .object({ lat: z.number(), lon: z.number() })
-    .optional(),
+  coordinates: z.object({ lat: z.number(), lon: z.number() }).optional(),
   placeId: z.string().optional(),
 });
 
@@ -49,7 +47,9 @@ export async function GET() {
       ...(p.plan as object),
       createdAt: p.createdAt,
     }));
-    return NextResponse.json(normalized, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(normalized, {
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch {
     return NextResponse.json([], { status: 500 });
   }
@@ -60,17 +60,25 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = TripPlan.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return NextResponse.json(
+        { error: parsed.error.flatten() },
+        { status: 400 },
+      );
     }
     const db = await getDb();
     const doc = { plan: parsed.data, createdAt: new Date() };
     const res = await db.collection("plans").insertOne(doc);
-    return NextResponse.json({ _id: String(res.insertedId), ...parsed.data, createdAt: doc.createdAt });
+    return NextResponse.json({
+      _id: String(res.insertedId),
+      ...parsed.data,
+      createdAt: doc.createdAt,
+    });
   } catch (e) {
-    return NextResponse.json({ error: "DB error", details: e }, { status: 500 });
+    return NextResponse.json(
+      { error: "DB error", details: e },
+      { status: 500 },
+    );
   }
 }
 
 export const dynamic = "force-dynamic";
-
-

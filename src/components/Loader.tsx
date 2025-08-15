@@ -6,5 +6,3 @@ export default function Loader({ label = "Loading" }: { label?: string }) {
     </div>
   );
 }
-
-

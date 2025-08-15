@@ -24,6 +24,8 @@ export default function HistoryList() {
     return <div className="text-sm text-zinc-500">No history yet</div>;
   }
 
+  console.log(data);
+
   return (
     <div className="space-y-2">
       {data.map((p) => (
@@ -47,12 +49,12 @@ export default function HistoryList() {
         >
           <div className="text-sm font-medium truncate">{p.name}</div>
           {p.destinations && p.destinations.length > 0 ? (
-            <div className="text-xs text-zinc-500 truncate">{p.destinations.join(", ")}</div>
+            <div className="text-xs text-zinc-500 truncate">
+              {p.destinations.join(", ")}
+            </div>
           ) : null}
         </button>
       ))}
     </div>
   );
 }
-
-

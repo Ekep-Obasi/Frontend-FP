@@ -37,7 +37,12 @@ type TripState = {
   setActivePlan: (id?: string) => void;
   upsertPlan: (plan: TripPlan) => void;
   removePlan: (id: string) => void;
-  updateDayItem: (planId: string, dayIndex: number, itemIndex: number, item: Partial<TripDayItem>) => void;
+  updateDayItem: (
+    planId: string,
+    dayIndex: number,
+    itemIndex: number,
+    item: Partial<TripDayItem>,
+  ) => void;
 };
 
 export const useTripStore = create<TripState>()(
@@ -57,7 +62,11 @@ export const useTripStore = create<TripState>()(
           return { plans: [plan, ...state.plans], activePlanId: plan.id };
         }),
       removePlan: (id) =>
-        set((state) => ({ plans: state.plans.filter((p) => p.id !== id), activePlanId: state.activePlanId === id ? undefined : state.activePlanId })),
+        set((state) => ({
+          plans: state.plans.filter((p) => p.id !== id),
+          activePlanId:
+            state.activePlanId === id ? undefined : state.activePlanId,
+        })),
       updateDayItem: (planId, dayIndex, itemIndex, item) =>
         set((state) => {
           const plans = state.plans.map((p) => {
@@ -73,8 +82,6 @@ export const useTripStore = create<TripState>()(
           return { plans };
         }),
     }),
-    { name: "trip-store" }
-  )
+    { name: "trip-store" },
+  ),
 );
-
-

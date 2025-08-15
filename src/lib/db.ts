@@ -2,7 +2,9 @@ import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 if (!uri) {
-  console.warn("MONGODB_URI is not set. API endpoints depending on DB will fail.");
+  console.warn(
+    "MONGODB_URI is not set. API endpoints depending on DB will fail.",
+  );
 }
 
 declare global {
@@ -25,5 +27,3 @@ export async function getDb() {
   const cli = await clientPromise;
   return cli.db(process.env.MONGODB_DB || "smart-travel-itineraries");
 }
-
-

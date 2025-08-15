@@ -24,36 +24,55 @@ const TripPlan = z.object({
           description: z.string().optional(),
           placeQuery: z.string().optional(),
           type: z.string().optional(),
-          coordinates: z.object({ lat: z.number(), lon: z.number() }).optional(),
+          coordinates: z
+            .object({ lat: z.number(), lon: z.number() })
+            .optional(),
           placeId: z.string().optional(),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const db = await getDb();
-    const doc = await db.collection("plans").findOne({ _id: new ObjectId(params.id) });
+    const doc = await db
+      .collection("plans")
+      .findOne({ _id: new ObjectId(params.id) });
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json({ _id: String(doc._id), ...doc.plan, createdAt: doc.createdAt }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(
+      { _id: String(doc._id), ...doc.plan, createdAt: doc.createdAt },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch {
     return NextResponse.json({ error: "DB error" }, { status: 500 });
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const body = await req.json();
     const parsed = TripPlan.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return NextResponse.json(
+        { error: parsed.error.flatten() },
+        { status: 400 },
+      );
     }
     const db = await getDb();
     await db
       .collection("plans")
-      .updateOne({ _id: new ObjectId(params.id) }, { $set: { plan: parsed.data } });
+      .updateOne(
+        { _id: new ObjectId(params.id) },
+        { $set: { plan: parsed.data } },
+      );
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "DB error" }, { status: 500 });
@@ -62,7 +81,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export const dynamic = "force-dynamic";
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const db = await getDb();
     await db.collection("plans").deleteOne({ _id: new ObjectId(params.id) });
@@ -71,5 +93,3 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: "DB error" }, { status: 500 });
   }
 }
-
-
