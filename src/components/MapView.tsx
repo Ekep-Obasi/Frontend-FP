@@ -13,12 +13,13 @@ export default function MapView({
   markers = [],
   fitBounds = true,
 }: MapViewProps) {
-  const apiKey =
-    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
-    process.env.GOOGLE_MAPS_API_KEY ||
-    process.env.GOOGLE_PLACES_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  const { isLoaded } = useLoadScript({ googleMapsApiKey: apiKey || "" });
+  const { isLoaded } = useLoadScript({
+    id: "google-maps",
+    googleMapsApiKey: apiKey || "",
+    libraries: ["places"],
+  });
 
   if (!apiKey) {
     return (

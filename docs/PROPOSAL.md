@@ -7,9 +7,9 @@ Help travelers plan better trips in minutes by generating smart, personalized it
 
 - **Overchoice**: Too many sources, not enough synthesis.
 - **Time cost**: Research is fragmented across maps, blogs, and booking sites.
-- **Personalization gap**: Most tools aren’t tailored to interests, constraints, and budgets.
+- **Personalization gap**: Most tools aren&apos;t tailored to interests, constraints, and budgets.
 
-### What we’re building
+### What we&apos;re building
 
 - **Smart Itinerary**: AI‑curated day‑by‑day plans based on interests, dates, budget, and group size.
 - **Map‑first UI**: Explore places visually and preview photos, ratings, and review snippets.

@@ -63,7 +63,7 @@ export default function Onboarding({ onComplete }: Props) {
   return (
     <div className="max-w-xl mx-auto p-6">
       <div className="rounded-2xl border border-border p-6 bg-background">
-        <div className="text-lg font-semibold mb-4">Welcome to The Company</div>
+        <div className="text-lg font-semibold mb-4">Welcome to Tripee</div>
         {step === 1 && (
           <div className="space-y-3">
             <label className="text-sm block">Trip name</label>

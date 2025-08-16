@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     }
 
     const endpoint = query
-      ? `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`
+      ? `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}${location ? `&location=${encodeURIComponent(location)}&radius=3000` : ""}&key=${apiKey}`
       : `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${encodeURIComponent(location ?? "")}&radius=3000&key=${apiKey}`;
 
     const res = await fetch(endpoint);

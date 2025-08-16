@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR, { mutate } from "swr";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TripPlan, useTripStore } from "~/store/tripStore";
 
@@ -25,6 +26,7 @@ export default function HistoryPage() {
   const { upsertPlan, setActivePlan } = useTripStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newName, setNewName] = useState<string>("");
+  const router = useRouter();
 
   async function rename(_id: string, plan: Plan) {
     const body = { ...plan, name: newName };
@@ -62,6 +64,12 @@ export default function HistoryPage() {
     setActivePlan(plan.id);
   }
 
+  function openPlan(plan: TripPlan) {
+    upsertPlan(plan);
+    setActivePlan(plan.id);
+    router.push(`/itinerary/${plan.id}`);
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="text-xl font-semibold">History</div>
@@ -77,13 +85,25 @@ export default function HistoryPage() {
               className="rounded-xl border border-border p-4 bg-background"
             >
               <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="font-medium truncate">{p.name}</div>
+                <button
+                  className="min-w-0 text-left"
+                  onClick={() => openPlan(p)}
+                  title="Open itinerary"
+                >
+                  <div className="font-medium truncate underline-offset-2 hover:underline">
+                    {p.name}
+                  </div>
                   <div className="text-xs text-zinc-500 truncate">
                     {p.destinations?.join(", ")}
                   </div>
-                </div>
+                </button>
                 <div className="flex items-center gap-2">
+                  <button
+                    className="rounded-md bg-primary text-primary-foreground px-3 py-1 text-sm"
+                    onClick={() => openPlan(p)}
+                  >
+                    Open
+                  </button>
                   <button
                     className="rounded-md border px-3 py-1 text-sm"
                     onClick={() => setActive(p)}
