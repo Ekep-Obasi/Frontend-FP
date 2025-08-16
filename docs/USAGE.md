@@ -9,7 +9,6 @@
 7. Use the header `History` link to manage saved plans (rename, duplicate, delete, open).
 
 Tips
+
 - Click a card or timeline item to open the rich `PlaceDetails` modal with photos and reviews.
 - If a Google key is missing, some components render helpful inline messages instead of failing silently.
-
-

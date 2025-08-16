@@ -55,6 +55,7 @@ The app is a client-first planner that generates and visualizes travel itinerari
 ### Data models
 
 `TripPlan` (client + API)
+
 - `id: string` – client identifier
 - `name: string`
 - `travelers: number`
@@ -66,11 +67,13 @@ The app is a client-first planner that generates and visualizes travel itinerari
 - `days: TripDay[]`
 
 `TripDay`
+
 - `date?: string`
 - `summary?: string`
 - `items: TripDayItem[]`
 
 `TripDayItem`
+
 - `time?: string`
 - `title: string`
 - `description?: string`
@@ -96,5 +99,3 @@ The app is a client-first planner that generates and visualizes travel itinerari
 
 - SWR handles client fetch caching and revalidation for places and plans.
 - Images from `/api/places/photo` are served with `Cache-Control: public, max-age=86400`.
-
-

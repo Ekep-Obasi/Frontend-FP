@@ -32,6 +32,7 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_token
 ```
 
 Notes
+
 - The `/api/places/photo` endpoint accepts several env var names for Google Places: `GOOGLE_PLACES_API_KEY`, `GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Prefer setting `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`.
 - If MongoDB envs are missing, DB routes will respond with 500 and a warning is logged at runtime.
 
@@ -55,5 +56,3 @@ Visit `http://localhost:3000`.
 ### Deployment
 
 - Works out-of-the-box on Vercel. Ensure the same env vars are configured in the dashboard. MongoDB network access must permit Vercel IPs or use Atlas with proper access lists.
-
-

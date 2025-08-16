@@ -17,5 +17,3 @@
 
 - CORS
   - Default Next.js behavior; all API routes are same-origin and consumed by the app.
-
-

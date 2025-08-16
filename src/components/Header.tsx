@@ -3,7 +3,7 @@ import { Compass } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-background/90 border-b border-border">
+    <header className="sticky top-0 backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-background/90 border-b border-border z-50">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         <Link
           href="/"

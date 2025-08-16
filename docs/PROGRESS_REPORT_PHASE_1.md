@@ -16,6 +16,7 @@ Date: {{update as needed}}
 - Scripts in `package.json` to dev, build, start, lint, and format.
 
 Evidence
+
 - See `docs/ARCHITECTURE.md` and `docs/SETUP.md`.
 
 ### 2) Basic components and state
@@ -63,5 +64,3 @@ Evidence
 - Navigation and Routing – implemented (2/2)
 - Basic Styling and Responsiveness – implemented (2/2)
 - Documentation and Submission – this docs folder (2/2)
-
-

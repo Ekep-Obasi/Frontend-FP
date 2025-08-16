@@ -7,13 +7,13 @@ Plan smarter trips with AI: generate daily timelines, browse places with photos/
 
 ### Quick start
 
-1) Install dependencies
+1. Install dependencies
 
 ```
 pnpm install
 ```
 
-2) Configure environment
+2. Configure environment
 
 Create `.env.local` with at least:
 
@@ -24,7 +24,7 @@ NEXT_PUBLIC_MONGODB_URI=...
 NEXT_PUBLIC_MONGODB_DB=smart-travel-itineraries
 ```
 
-3) Run the app
+3. Run the app
 
 ```
 pnpm dev
@@ -61,4 +61,3 @@ Start here: [`docs/README_DOCS.md`](docs/README_DOCS.md)
 - `pnpm start` – start production
 - `pnpm lint` – run ESLint
 - `pnpm format` – format with Prettier
-

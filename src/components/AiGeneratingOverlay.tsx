@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react";
 
 export default function AiGeneratingOverlay({
   visible,
-  label = "We&apos;re building your perfect itinerary…",
+  label = "We're building your perfect itinerary…",
 }: {
   visible: boolean;
   label?: string;

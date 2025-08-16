@@ -5,6 +5,7 @@ The app uses two persisted Zustand stores.
 #### `useTripStore` (`src/store/tripStore.ts`)
 
 - Shape
+
 ```
 {
   plans: TripPlan[],
@@ -15,6 +16,7 @@ The app uses two persisted Zustand stores.
   updateDayItem(planId: string, dayIndex: number, itemIndex: number, item: Partial<TripDayItem>): void
 }
 ```
+
 - Persistence key: `trip-store`.
 - Typical flow
   1. After `/api/ai`, build a `TripPlan` and `upsertPlan` it.
@@ -29,5 +31,3 @@ The app uses two persisted Zustand stores.
   - `closePlace()` – closes the modal and clears selection.
   - `setMapTo(center, markers?)` – adjusts the map view.
 - Persistence key: `ui-store`.
-
-

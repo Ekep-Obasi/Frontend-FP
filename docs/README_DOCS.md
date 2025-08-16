@@ -8,5 +8,3 @@
 - `USAGE.md` – how to use the app features
 - `SECURITY_PRIVACY.md` – notes on keys, data, and privacy
 - `PROGRESS_REPORT_PHASE_1.md` – milestone report matching course rubric
-
-
