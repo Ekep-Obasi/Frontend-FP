@@ -38,8 +38,6 @@ export default function PlaceDetails({
 
   const loading = isSearching || isLoadingDetails;
   const result = detailsData?.result;
-  const upstreamStatus = detailsData?.status || searchData?.status;
-  const upstreamError = detailsData?.error_message || searchData?.error_message;
 
   const isReady = !!result && !loading;
 

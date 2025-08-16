@@ -1,4 +1,4 @@
-### Smart Travel Itinerary Builder — Proposal (The Company)
+### Smart Travel Itinerary Builder — Proposal (The Tripee)
 
 **Goal**
 Help travelers plan better trips in minutes by generating smart, personalized itineraries and letting them refine, preview, and save plans with a clean, map‑centric UI.
