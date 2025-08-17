@@ -35,7 +35,22 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `You are a travel planner. Create a JSON itinerary with fields: days[ { date, summary, items: [ { time, title, description, placeQuery, type } ] } ], overallTips, estimatedCostUSD (number), destinations (array of strings). Consider: interests=${parsed.data.interests.join(", ")}, constraints=${parsed.data.constraints.join(", ")}, budget=${parsed.data.budgetLevel ?? "medium"}, travelers=${parsed.data.travelers}, destinationHint=${parsed.data.destinationHint ?? ""}, start=${parsed.data.startDate ?? ""}, end=${parsed.data.endDate ?? ""}. Keep it concise and realistic.`;
+    // Determine a concrete start date (default to today, YYYY-MM-DD)
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const startDateIso =
+      parsed.data.startDate && parsed.data.startDate.trim() !== ""
+        ? parsed.data.startDate
+        : todayIso;
+
+    const prompt = `You are a travel planner. Create a JSON itinerary with fields: days[ { date, summary, items: [ { time, title, description, placeQuery, type } ] } ], overallTips, estimatedCostUSD (number), destinations (array of strings). Consider: interests=${parsed.data.interests.join(
+      ", ",
+    )}, constraints=${parsed.data.constraints.join(", ")}, budget=${
+      parsed.data.budgetLevel ?? "medium"
+    }, travelers=${parsed.data.travelers}, destinationHint=${
+      parsed.data.destinationHint ?? ""
+    }, start=${startDateIso}, end=${
+      parsed.data.endDate ?? ""
+    }. Keep it concise and realistic.`;
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -52,6 +67,21 @@ export async function POST(req: NextRequest) {
     }
     const jsonStr = text.slice(jsonStart, jsonEnd + 1);
     const itinerary = JSON.parse(jsonStr);
+
+    // Ensure itinerary days have sequential dates starting from startDateIso
+    if (itinerary && Array.isArray(itinerary.days)) {
+      const base = new Date(startDateIso);
+      itinerary.days = itinerary.days.map(
+        (day: Record<string, unknown>, index: number) => {
+          const d = new Date(base);
+          d.setDate(base.getDate() + index);
+          return {
+            ...day,
+            date: d.toISOString().slice(0, 10),
+          };
+        },
+      );
+    }
 
     return NextResponse.json({ itinerary });
   } catch (error) {
